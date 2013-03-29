@@ -1,6 +1,7 @@
 from alina.common import IllegalArgumentException
 import facebook
 import json
+import datetime
 
 class FileReaderIterator(object):
     
@@ -59,13 +60,14 @@ class FacebookPostsReaderIterator:
         self.graph = facebook.GraphAPI(token)
         self.id = self._get_id()
         self.until = None
+        self._main_query = True
+        self._current_date = datetime.datetime.now()
+        self._day_shift = 90
         #advance in the posts
         self._next_page()
     
     def _get_id(self):
         profile = self.graph.get_object(self.person)
-        #TODO remove me
-        print profile
         return profile['id']
     
     def _next_page(self):
@@ -73,23 +75,41 @@ class FacebookPostsReaderIterator:
             'access_token': self.token,
             'limit': self.limit,
         }
-        if self.until is not None:
-            post_args['until'] = self.until
-        if self.last_post_date is not None:
-            post_args['since'] = self.last_post_date
         
         path = self.id + "/posts" # try /feed too
         
+        if self._main_query:
+            post_args['until'] = self._date_to_str(self._current_date)
+            #go back _day_shift number of days
+            self._current_date = self._minus_n_days(self._current_date, self._day_shift)
+            post_args['since'] = self._date_to_str(self._current_date)
+            #go back one more day!
+            self._current_date = self._minus_n_days(self._current_date, 1)
+            self._main_query = False
+            #make request
+            self._request_and_advance(path, post_args)
+        else:
+            post_args['until'] = self.until
+            #make request
+            self._request_and_advance(path, post_args)
+            
+            #end of this page
+            if self._list is None or len(self._list) == 0:
+                #move to next X days
+                self._main_query = True
+                #advance
+                self._next_page()
+    
+    def _request_and_advance(self, path, post_args):
+        #get the data
         data = self.graph.request(path, post_args)
-
         #the actual results
         self._list = data['data']
         #until will change
         if data.has_key('paging'):
             next_url = data['paging']['next']
             self.until = self._get_until(next_url)
-        
-
+    
     def _get_until(self, url):
         #"https://graph.facebook.com/<ID>/posts?limit=<LIMIT>&until=<UNTIL>"
         from urlparse import urlparse, parse_qs
@@ -109,4 +129,9 @@ class FacebookPostsReaderIterator:
         value = self._list
         self._next_page()
         return value
-        
+    
+    def _date_to_str(self, now):
+        return now.strftime("%Y-%m-%d")
+            
+    def _minus_n_days(self, now, days):
+        return now - datetime.timedelta(days = days)
