@@ -1,0 +1,1 @@
+C:\pyWork\facebook\alina>python main.py -f 2010-01-01 -t 2013-01-01 -p barackobama,mittromney -k AAACEdEose0cBAJgYJVMviFfKZCmh4yqekom6MNunv4HNaKwXvtnBIw2r8EZCR5FiYzG4WwQSdxbXT0ZADCacknOYZCqXGZANZC6v4BRJ5TgwZDZD
