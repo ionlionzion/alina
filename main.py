@@ -38,6 +38,6 @@ persons = options.persons.split(',')
 	
 if __name__ == '__main__':
 	# https://developers.facebook.com/tools/explorer/ (get access token)
-	#token = "AAACEdEose0cBAPFbxZC2BccVXjzOD6fyHTFisJ2cbgPrwkBjhMob9pqm8decWWiaCZCy6aVMgWAF11Lbsh9zZCPIANED63ClaDuEtcaBQZDZD"
+	# token = "AAACEdEose0cBAPFbxZC2BccVXjzOD6fyHTFisJ2cbgPrwkBjhMob9pqm8decWWiaCZCy6aVMgWAF11Lbsh9zZCPIANED63ClaDuEtcaBQZDZD"
 	
 	collect_posts_and_count_words(persons, options.token, since = options.since, until = options.to)
