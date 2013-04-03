@@ -8,7 +8,8 @@ from alina.publisher import CsvPublisher, JsonPublisher, WordCounter
 from alina.reader import FileReaderIterator, json_read
 from alina.util import collect, convert_json_to_clean_csv, between, \
     convert_json_to_word_list, collect_facebook_posts, \
-    convert_fbk_json_to_simple_json, collect_posts, count_words
+    convert_fbk_json_to_simple_json, collect_posts, count_words, \
+    raw_messages
 
 from optparse import OptionParser
 parser = OptionParser()
@@ -31,10 +32,19 @@ parser.add_option("-o", "--output",
                   help="destination folder for processing results")
 parser.add_option("-x", "--action",
                   dest="action", default=None,
-                  help="valid options are get_posts and word_count")
+                  help="valid options are get_posts, word_count and raw_text")
 
 (options, args) = parser.parse_args()
-    
+ 
+def raw_text(options):
+    if options.target is None:
+        print "you must supply a target folder"
+        sys.exit()
+    if options.destination is None:
+        print "you must supply an output folder"
+        sys.exit()
+    raw_messages(options.target, options.destination, since = options.since, until = options.to)
+
 def get_posts(options):
     if options.token is None:
         print "No specified token"
@@ -54,7 +64,7 @@ def word_count(option):
         sys.exit()
     count_words(options.target, options.destination, since = options.since, until = options.to)
     
-actions = {"get_posts" : get_posts, "word_count" : word_count}   
+actions = {"get_posts" : get_posts, "word_count" : word_count, "raw_text" : raw_text}   
 
 def delegate(options):
     action = options.action

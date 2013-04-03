@@ -15,5 +15,10 @@ where -g posts is input folder
       -o wrd_count is output folder
       -f, -t are dates
       
+---> to get just the text in messages (for word clouds)
+c:\pyWork\alina>python main.py -x raw_text -g posts -o raw      
+where -g posts is input folder
+      -o raw is output folder
+
 ---> to get a reminder of arguments
 c:\pyWork\alina>python main.py -help

@@ -132,22 +132,28 @@ def create_folder(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
+def create_filter(since = None, until = None):
+    if since is None:
+		if until is None:
+			return no_filter
+		else:
+			return before(until)
+    else:
+		if until is None:
+			return after(since)
+		else:
+			return between(since, until)
+
+def get_files_in_folder(target):
+    return [ f for f in os.listdir(target) if os.path.isfile(os.path.join(target, f)) ]
+            
 def count_words(target, dest, since = None, until = None):
     # create the destination folder
     create_folder(dest)
     # get files
-    onlyfiles = [ f for f in os.listdir(target) if os.path.isfile(os.path.join(target, f)) ]
+    onlyfiles = get_files_in_folder(target)
     
-    if since is None:
-		if until is None:
-			filter_fun = no_filter
-		else:
-			filter_fun = before(until)
-    else:
-		if until is None:
-			filter_fun = after(since)
-		else:
-			filter_fun = between(since, until)
+    filter_fun = create_filter(since, until)
     
     for _file in onlyfiles:
 		w = WordCounter()
@@ -157,3 +163,21 @@ def count_words(target, dest, since = None, until = None):
 				filter_function = filter_fun)
 
 		w.dump(os.path.join(dest, _file))
+        
+def to_clean_text(msg):
+    return " ".join(convert_json_to_word_list(msg))
+ 
+def raw_messages(target, dest, since = None, until = None):
+    # create the destination folder
+    create_folder(dest)
+    # get files
+    onlyfiles = get_files_in_folder(target)
+    
+    filter_fun = create_filter(since, until)
+    
+    for _file in onlyfiles:
+		pub = CsvPublisher(os.path.join(dest, _file))
+		collect(FileReaderIterator(os.path.join(target, _file), json_read), 
+				pub, 
+				convert_function = to_clean_text,
+				filter_function = filter_fun)
