@@ -1,1 +1,19 @@
-C:\pyWork\facebook\alina>python main.py -f 2010-01-01 -t 2013-01-01 -p barackobama,mittromney -k AAACEdEose0cBAJgYJVMviFfKZCmh4yqekom6MNunv4HNaKwXvtnBIw2r8EZCR5FiYzG4WwQSdxbXT0ZADCacknOYZCqXGZANZC6v4BRJ5TgwZDZD
+
+start/run --> cmd
+cd C:\pyWork\alina (or whatever)
+
+---> to get posts:
+c:\pyWork\alina>python main.py -x get_posts -p mittromney,barackobama -k AAACEdEose0cBAF0LYzni8I0yzIGqCnvsZCZBAAmdbSpnu9pPw11uHSfC4oGcGoOjTqGhjMBYmaD8gxeOiSRx7qQuvjcD794WWRGDT3AAZDZD
+
+where AAACEdEose0cBAF0LYzni8I0yzIGqCnvsZCZBAAmdbSpnu9pPw11uHSfC4oGcGoOjTqGhjMBYmaD8gxeOiSRx7qQuvjcD794WWRGDT3AAZDZD is a token from 
+https://developers.facebook.com/tools/explorer/
+
+---> to count words:
+c:\pyWork\alina>python main.py -x word_count -g posts -o wrd_count -f 2010-01-01 -t 2012-01-01
+
+where -g posts is input folder
+      -o wrd_count is output folder
+      -f, -t are dates
+      
+---> to get a reminder of arguments
+c:\pyWork\alina>python main.py -help

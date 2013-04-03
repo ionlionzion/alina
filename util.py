@@ -4,6 +4,7 @@ from alina.publisher import CsvPublisher, JsonPublisher, WordCounter
 from alina.reader import FacebookPostsReaderIterator, FileReaderIterator, json_read
 import inflect
 import re
+import os
 
 STEMMER = PorterStemmer()
 INFLECT = inflect.engine()
@@ -17,11 +18,11 @@ def _to_str(data):
 def _encode(value):
     return unicode.encode(value, 'utf-8')    
 
-def collect_facebook_posts(name, token, last_post_date = None, page_size = 25):    
+def collect_facebook_posts(name, token, dir, last_post_date = None, page_size = 25):    
     fbk_reader = FacebookPostsReaderIterator(name, token, 
                                          last_post_date, limit = page_size)
 
-    json_pub = JsonPublisher("data/" + name + ".txt", "data/meta_" + name + ".txt")
+    json_pub = JsonPublisher(dir + "/" + name + ".txt", dir + "/meta_" + name + ".txt")
     collect(fbk_reader, json_pub)
 
 def same(elem):
@@ -121,25 +122,38 @@ def convert_json_to_word_list(json_obj):
     if json_obj.has_key('message'):
         message = json_obj['message']
     return clean_as_list(message)
-	
-def collect_posts_and_count_words(persons, token, since = None, until = None):
-	if since is None:
+
+def collect_posts(persons, token, dest):
+    create_folder(dest)
+    for person in persons:
+		collect_facebook_posts(person, token, dest)
+
+def create_folder(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+def count_words(target, dest, since = None, until = None):
+    # create the destination folder
+    create_folder(dest)
+    # get files
+    onlyfiles = [ f for f in os.listdir(target) if os.path.isfile(os.path.join(target, f)) ]
+    
+    if since is None:
 		if until is None:
 			filter_fun = no_filter
 		else:
 			filter_fun = before(until)
-	else:
+    else:
 		if until is None:
 			filter_fun = after(since)
 		else:
 			filter_fun = between(since, until)
-			
-	for person in persons:
+    
+    for _file in onlyfiles:
 		w = WordCounter()
-		collect_facebook_posts(person, token)
-		collect(FileReaderIterator("data/" + person + ".txt", json_read), 
+		collect(FileReaderIterator(os.path.join(target, _file), json_read), 
 				w, 
 				convert_function = convert_json_to_word_list,
 				filter_function = filter_fun)
 
-		w.dump("data/word_count" + person + ".txt")
+		w.dump(os.path.join(dest, _file))
