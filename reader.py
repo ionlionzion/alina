@@ -2,6 +2,7 @@ from alina.common import IllegalArgumentException
 import facebook
 import json
 import datetime
+from facebook import GraphAPIError
 
 class FileReaderIterator(object):
     
@@ -73,7 +74,7 @@ class FacebookPostsReaderIterator:
     def _next_page(self):
         post_args = {
             'access_token': self.token,
-            'limit': self.limit,
+            'limit': self.limit
         }
         
         path = self.id + "/posts" # try /feed too
@@ -104,11 +105,15 @@ class FacebookPostsReaderIterator:
         #get the data
         data = self.graph.request(path, post_args)
         #the actual results
-        self._list = data['data']
-        #until will change
-        if data.has_key('paging'):
-            next_url = data['paging']['next']
-            self.until = self._get_until(next_url)
+        if data.has_key('data'):
+            self._list = data['data']
+                
+            #until will change
+            if data.has_key('paging'):
+                next_url = data['paging']['next']
+                self.until = self._get_until(next_url)
+        else:
+            self._list = None
     
     def _get_until(self, url):
         #"https://graph.facebook.com/<ID>/posts?limit=<LIMIT>&until=<UNTIL>"
