@@ -2,14 +2,15 @@
 start/run --> cmd
 cd C:\pyWork\alina (or whatever)
 
+EDIT application.py
+from https://developers.facebook.com/apps/ get application_id and application secret and fill them in.
+This needs to be done ONCE. Do NOT commit this file as Git repo is public.
+
 ---> to get posts:
-c:\pyWork\alina>python main.py -x get_posts -p mittromney,barackobama -k AAACEdEose0cBAF0LYzni8I0yzIGqCnvsZCZBAAmdbSpnu9pPw11uHSfC4oGcGoOjTqGhjMBYmaD8gxeOiSRx7qQuvjcD794WWRGDT3AAZDZD
+c:\pyWork\alina>python main.py -x get_posts -p mittromney,barackobama
 
 ---> to get feed:
-c:\pyWork\alina>python main.py -x get_feed -p mittromney,barackobama -k AAACEdEose0cBAF0LYzni8I0yzIGqCnvsZCZBAAmdbSpnu9pPw11uHSfC4oGcGoOjTqGhjMBYmaD8gxeOiSRx7qQuvjcD794WWRGDT3AAZDZD
-
-where AAACEdEose0cBAF0LYzni8I0yzIGqCnvsZCZBAAmdbSpnu9pPw11uHSfC4oGcGoOjTqGhjMBYmaD8gxeOiSRx7qQuvjcD794WWRGDT3AAZDZD is a token from 
-https://developers.facebook.com/tools/explorer/
+c:\pyWork\alina>python main.py -x get_feed -p mittromney,barackobama
 
 ---> to count words:
 c:\pyWork\alina>python main.py -x word_count -g posts -o wrd_count -f 2010-01-01 -t 2012-01-01
