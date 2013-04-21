@@ -4,8 +4,11 @@ import os
 basepath = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(basepath, "..")))
 
+import datetime
 from alina.util import collect_posts, collect_feed, count_words, \
     messages_to_csv, raw_text
+
+FORMAT = '%Y-%m-%d'
 
 from optparse import OptionParser
 parser = OptionParser()
@@ -32,6 +35,11 @@ parser.add_option("-x", "--action",
 
 (options, args) = parser.parse_args()
 
+def _to_date(a_date):
+    if a_date is None:
+        return None
+    return datetime.datetime.strptime(a_date, FORMAT)
+
 def raw_text_action(options):
     if options.target is None:
         print "you must supply a target folder"
@@ -55,14 +63,14 @@ def get_posts_action(options):
         print "No persons"
         sys.exit()
     persons = options.persons.split(',')
-    collect_posts(persons, os.path.join(basepath, "posts"))
+    collect_posts(persons, os.path.join(basepath, "posts"), _to_date(options.since), _to_date(options.to))
     
 def get_feed_action(options):
     if options.persons is None:
         print "No persons"
         sys.exit()
     persons = options.persons.split(',')
-    collect_feed(persons, os.path.join(basepath, "feed"))
+    collect_feed(persons, os.path.join(basepath, "feed"), _to_date(options.since), _to_date(options.to))
 
 def word_count_action(option):
     if options.target is None:

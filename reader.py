@@ -55,7 +55,7 @@ def csv_read(csv_stream):
 class FacebookPathReaderIterator:
     """Reads all Facebook posts of a person."""
     
-    def __init__(self, person, uri_path, limit = 25):
+    def __init__(self, person, uri_path, from_date = datetime.datetime.now(), to_date = None, limit = 25):
         self.person = person
         self.limit = limit
         self.uri_path = uri_path
@@ -63,7 +63,8 @@ class FacebookPathReaderIterator:
         self.id = self._get_id()
         self.until = None
         self._main_query = True
-        self._current_date = datetime.datetime.now()
+        self.from_date = from_date
+        self.to_date = to_date
         self._day_shift = 90
         #advance in the posts
         self._next_page()
@@ -81,12 +82,16 @@ class FacebookPathReaderIterator:
         path = self.id + "/" + self.uri_path # try /feed too
         
         if self._main_query:
-            post_args['until'] = self._date_to_str(self._current_date)
+            if self.to_date is not None and self.from_date < self.to_date:
+                # stop!
+                self._list = None
+                return
+            post_args['until'] = self._date_to_str(self.from_date)
             #go back _day_shift number of days
-            self._current_date = self._minus_n_days(self._current_date, self._day_shift)
-            post_args['since'] = self._date_to_str(self._current_date)
+            self.from_date = self._minus_n_days(self.from_date, self._day_shift)
+            post_args['since'] = self._date_to_str(self.from_date)
             #go back one more day!
-            self._current_date = self._minus_n_days(self._current_date, 1)
+            self._current_date = self._minus_n_days(self.from_date, 1)
             self._main_query = False
             #make request
             self._request_and_advance(path, post_args)

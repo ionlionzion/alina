@@ -124,15 +124,15 @@ def count_words(target, dest, processor, since=None, until=None):
 
         w.dump(os.path.join(dest, _file))
 
-def collect_posts(persons, dest):
+def collect_posts(persons, dest, from_date, to_date):
     create_folder(dest)
     for person in persons:
-        collect_facebook_path(person, dest, 'posts')
+        collect_facebook_path(person, dest, 'posts', from_date, to_date)
 
-def collect_feed(persons, dest):
+def collect_feed(persons, dest, from_date, to_date):
     create_folder(dest)
     for person in persons:
-        collect_facebook_path(person, dest, 'feed')
+        collect_facebook_path(person, dest, 'feed', from_date, to_date)
 
 ########################## ACTIONS ##########################
 
@@ -156,8 +156,8 @@ def to_csv(msg, processor):
     created_time = msg['created_time']
     return ",".join([name, message, created_time[:10]])
 
-def collect_facebook_path(name, folder, uri_path, page_size=25):    
-    fbk_reader = FacebookPathReaderIterator(name, uri_path, limit=page_size)
+def collect_facebook_path(name, folder, uri_path, from_date, to_date, page_size=25):    
+    fbk_reader = FacebookPathReaderIterator(name, uri_path, to_date, from_date, limit=page_size)
     json_pub = JsonPublisher(folder + "/" + name + "_" + uri_path + ".txt")
     collect(fbk_reader, json_pub, "raw", same, no_filter)
 
