@@ -5,6 +5,9 @@ cd C:\pyWork\alina (or whatever)
 ---> to get posts:
 c:\pyWork\alina>python main.py -x get_posts -p mittromney,barackobama -k AAACEdEose0cBAF0LYzni8I0yzIGqCnvsZCZBAAmdbSpnu9pPw11uHSfC4oGcGoOjTqGhjMBYmaD8gxeOiSRx7qQuvjcD794WWRGDT3AAZDZD
 
+---> to get feed:
+c:\pyWork\alina>python main.py -x get_feed -p mittromney,barackobama -k AAACEdEose0cBAF0LYzni8I0yzIGqCnvsZCZBAAmdbSpnu9pPw11uHSfC4oGcGoOjTqGhjMBYmaD8gxeOiSRx7qQuvjcD794WWRGDT3AAZDZD
+
 where AAACEdEose0cBAF0LYzni8I0yzIGqCnvsZCZBAAmdbSpnu9pPw11uHSfC4oGcGoOjTqGhjMBYmaD8gxeOiSRx7qQuvjcD794WWRGDT3AAZDZD is a token from 
 https://developers.facebook.com/tools/explorer/
 
@@ -22,3 +25,5 @@ where -g posts is input folder
 
 ---> to get a reminder of arguments
 c:\pyWork\alina>python main.py -help
+
+---> to process text in a certain way : add a -r raw, -r stem, -r clean after the command. raw is default.

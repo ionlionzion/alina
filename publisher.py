@@ -27,7 +27,7 @@ class Publisher(object):
         
 class JsonPublisher(Publisher):
     
-    def __init__(self, path, meta_path):
+    def __init__(self, path):
         super(Publisher, self).__init__()
         if path is None:
             raise IllegalArgumentException("You must supply a path to publish objects.")
@@ -95,8 +95,8 @@ class WordCounter:
     def close(self):
         pass
     
-    #elem should be a word array
-    def publish(self, elems):
+    def publish(self, text):
+        elems = text.split()
         for elem in elems:
             if self.words.has_key(elem):
                 self.words[elem] = self.words[elem] + 1
