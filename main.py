@@ -14,9 +14,6 @@ parser.add_option("-f", "--from", dest="since", default = None,
 parser.add_option("-t", "--to",
                   dest="to", default=None,
                   help="to date")
-parser.add_option("-k", "--token",
-                  dest="token", default=None,
-                  help="facebook dev token")
 parser.add_option("-p", "--persons",
                   dest="persons", default=None,
                   help="persons to get posts from")
@@ -54,24 +51,18 @@ def to_csv_action(options):
     messages_to_csv(options.target, options.destination, options.processor, since = options.since, until = options.to)
 
 def get_posts_action(options):
-    if options.token is None:
-        print "No specified token"
-        sys.exit() 
     if options.persons is None:
         print "No persons"
         sys.exit()
     persons = options.persons.split(',')
-    collect_posts(persons, options.token, os.path.join(basepath, "posts"))
+    collect_posts(persons, os.path.join(basepath, "posts"))
     
 def get_feed_action(options):
-    if options.token is None:
-        print "No specified token"
-        sys.exit() 
     if options.persons is None:
         print "No persons"
         sys.exit()
     persons = options.persons.split(',')
-    collect_feed(persons, options.token, os.path.join(basepath, "feed"))
+    collect_feed(persons, os.path.join(basepath, "feed"))
 
 def word_count_action(option):
     if options.target is None:

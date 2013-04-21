@@ -2,6 +2,8 @@ from alina.common import IllegalArgumentException
 import facebook
 import json
 import datetime
+from alina.application import APP_ID, APP_SECRET
+from facebook import GraphAPIError
 
 class FileReaderIterator(object):
     
@@ -52,13 +54,11 @@ def csv_read(csv_stream):
 class FacebookPathReaderIterator:
     """Reads all Facebook posts of a person."""
     
-    def __init__(self, person, token, last_post_date, uri_path, limit = 25):
+    def __init__(self, person, uri_path, limit = 25):
         self.person = person
-        self.token = token
-        self.last_post_date = last_post_date
         self.limit = limit
         self.uri_path = uri_path
-        self.graph = facebook.GraphAPI(token)
+        self.graph = facebook.GraphAPI(facebook.get_app_access_token(APP_ID, APP_SECRET))
         self.id = self._get_id()
         self.until = None
         self._main_query = True
@@ -103,7 +103,11 @@ class FacebookPathReaderIterator:
     
     def _request_and_advance(self, path, post_args):
         #get the data
-        data = self.graph.request(path, post_args)
+        try:
+            data = self.graph.request(path, post_args)
+        except GraphAPIError:
+            self.graph.extend_access_token(APP_ID, APP_SECRET)
+            data = self.graph.request(path, post_args)
         #the actual results
         if data.has_key('data'):
             self._list = data['data']
