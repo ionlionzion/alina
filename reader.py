@@ -4,6 +4,7 @@ import json
 import datetime
 from alina.application import APP_ID, APP_SECRET
 from facebook import GraphAPIError
+from urllib2 import URLError
 
 class FileReaderIterator(object):
     
@@ -58,7 +59,7 @@ class FacebookPathReaderIterator:
         self.person = person
         self.limit = limit
         self.uri_path = uri_path
-        self.graph = facebook.GraphAPI(facebook.get_app_access_token(APP_ID, APP_SECRET))
+        self.graph = facebook.GraphAPI(facebook.get_app_access_token(APP_ID, APP_SECRET), timeout = 20)
         self.id = self._get_id()
         self.until = None
         self._main_query = True
@@ -106,7 +107,10 @@ class FacebookPathReaderIterator:
         try:
             data = self.graph.request(path, post_args)
         except GraphAPIError:
-            self.graph.extend_access_token(APP_ID, APP_SECRET)
+            self.graph.access_token = facebook.get_app_access_token(APP_ID, APP_SECRET)
+            data = self.graph.request(path, post_args)
+        except URLError:
+            #retry
             data = self.graph.request(path, post_args)
         #the actual results
         if data.has_key('data'):
