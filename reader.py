@@ -73,7 +73,7 @@ class FacebookPathReaderIterator:
     
     def _next_page(self):
         post_args = {
-            'access_token': self.token,
+            'access_token': self.graph.access_token,
             'limit': self.limit
         }
         
